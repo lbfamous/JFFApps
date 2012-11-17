@@ -1,0 +1,15 @@
+#git 忽略文件的类型
+
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.exe
+*.ncb
+*.suo
+*.user
+change.log
+Intermediate/
+Builds/*.ncb
+Builds/*.suo
+Builds/*.user
