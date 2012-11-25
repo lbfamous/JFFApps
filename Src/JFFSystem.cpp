@@ -1,8 +1,10 @@
 #include "JFFSystem.h"
+#include "JFFD3DRenderAdapter.h"
+
 
 namespace JFF
 {
-
+	const INT	JFFRenderType = JFFSystem::_RENDER_TYPE_D3D;
 	const TCHAR* JFFSystemUtility:: _JFFAPP_CLASS_NAME	= L"JFF_CLASS_";
 	const TCHAR* JFFSystemUtility::_JFFAPP_DEFAULT_WIN_NAME = L"JFF_Ä¬ÈÏ´°¿Ú";
 	LRESULT WINAPI JFFSystemUtility::WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
@@ -23,7 +25,6 @@ namespace JFF
 
 	void JFFSystem::Initinalize(int width, int height)
 	{
-
 		HINSTANCE hInstance = ::GetModuleHandle(0);
 		WNDCLASS  JFFAppClass;
 		JFFAppClass.cbClsExtra = 0L;
@@ -44,11 +45,6 @@ namespace JFF
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,CW_USEDEFAULT,width,height,NULL,NULL,hInstance,
 			NULL);
-	
-		ShowWindow(mhWnd,SW_SHOW);
-		UpdateWindow(mhWnd);
-
-
 	}
 
 	void JFFSystem::MainLoop()
@@ -65,9 +61,45 @@ namespace JFF
 			}
 			else
 			{
-				//--do nothing;
+				if (m_pRenderAdapter)
+				{
+					m_pRenderAdapter ->Render();
+				}
 			}
 		}
+		
+	}
+	void JFFSystem::Terminate()
+	{
+		if (m_pRenderAdapter)
+		{
+			m_pRenderAdapter->Relase3DEnviromment();
+			delete m_pRenderAdapter;
+			m_pRenderAdapter = NULL;
+		}
 		UnregisterClass(JFFSystemUtility::_JFFAPP_CLASS_NAME,::GetModuleHandle(0));
+	}
+	void JFFSystem::InitRenderEnvironment(UINT uRenderAdapter)
+	{
+		switch(uRenderAdapter)
+		{
+		case _RENDER_TYPE_D3D:
+			m_pRenderAdapter = new D3DRenderAdapter(mhWnd);
+		default:
+			break;
+		}
+		if (m_pRenderAdapter != NULL)
+		{
+			m_pRenderAdapter ->Init3DEnvironment();
+			ShowWindow(mhWnd,SW_SHOW);
+			UpdateWindow(mhWnd);
+		}
+	}
+	void JFFSystem::setRenderData(IRenderData* pData)
+	{
+		if (m_pRenderAdapter)
+		{
+			m_pRenderAdapter ->setRenderData(pData);
+		}
 	}
 }

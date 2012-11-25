@@ -48,12 +48,11 @@
 //	return app_system;
 //}
 
-
-#include <windows.h>
-#include <tchar.h>		//For JFFCLASS NAME
-
+#include "JFFPreHeader.h"
 namespace JFF
 {
+	class IRenderAdapter;
+	class IRenderData;
 	class JFFSystemUtility
 	{
 	public:
@@ -65,6 +64,13 @@ namespace JFF
 	class JFFSystem
 	{
 	public:
+		enum  RENDER_TYPE
+		{
+			_RENDER_TYPE_D3D = 0,
+			_RENDER_TYPE_OGL,
+		};
+
+	public:
 		static JFFSystem& getSystem()
 		{
 			static JFFSystem	system;
@@ -73,15 +79,26 @@ namespace JFF
 
 	public:
 		void	Initinalize(int width,int height);	//-初始化大小
+		void	InitRenderEnvironment(UINT uRenderAdapter);	//-初始化渲染环境
+	
 		void	Run		   ();
+
+
 		void	MainLoop   ();
+		void	Terminate  ();
 
 	public:
 		void	setPosition(int x,int y);
+		void	setRenderData(IRenderData* pData);
 
 		HWND	getHwnd	   () const {return mhWnd;}
 	private:
 		HWND	mhWnd;			//-
+
+	private:	//-render;
+		//IRender*		mRender;
+		//IRender*		m_pRenderSys;
+		IRenderAdapter*		m_pRenderAdapter;	//-
 	private:
 		JFFSystem(){}
 	};
